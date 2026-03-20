@@ -471,110 +471,109 @@ function Bubble({ text, index, palette, onDoubleClick, isDrillSource, lang, keyw
         }}>⚡</div>
       )}
 
-      {/* Bubble */}
-      <div
-        onDoubleClick={handleDblClick}
-        onMouseEnter={() => { playHover(); }}
-        onMouseLeave={() => {}}
-        style={{
-          maxWidth: "72%",
-          background: flash ? bubbleStyle.border : bubbleStyle.bg,
-          backdropFilter: "blur(10px)",
-          border: `1.5px solid ${isActive ? bubbleStyle.border : bubbleStyle.border + "44"}`,
-          borderRadius: isLeft ? "4px 18px 18px 18px" : "18px 4px 18px 18px",
-          padding: "14px 18px",
-          position: "relative",
-          boxShadow: isActive
-            ? `0 0 0 3px ${bubbleStyle.border}66, 0 8px 32px rgba(0,0,0,0.3)`
-            : "0 8px 32px rgba(0,0,0,0.3)",
-          cursor: "pointer",
-          transition: "all 0.2s ease",
-        }}
-      >
-        <div style={{
-          position: "absolute", top: -1,
-          left: isLeft ? -1 : "auto", right: isLeft ? "auto" : -1,
-          width: 6, height: 6,
-          background: bubbleStyle.border, borderRadius: "50%",
-          boxShadow: `0 0 8px ${bubbleStyle.border}`,
-        }} />
+      {/* Column: bubble + action buttons below */}
+      <div style={{ display: "flex", flexDirection: "column", maxWidth: "72%", gap: 8 }}>
 
-        {/* Share menu popup */}
-        {showShare && (
-          <div onClick={e => e.stopPropagation()}>
-            <ShareMenu
-              text={text}
-              keyword={keyword}
-              bubbleStyle={bubbleStyle}
-              isLeft={isLeft}
-              onClose={() => setShowShare(false)}
-              onThreadsCopy={handleThreadsShare}
-            />
+        {/* Bubble */}
+        <div
+          onDoubleClick={handleDblClick}
+          onMouseEnter={() => playHover()}
+          style={{
+            background: flash ? bubbleStyle.border : bubbleStyle.bg,
+            backdropFilter: "blur(10px)",
+            border: `1.5px solid ${isActive ? bubbleStyle.border : bubbleStyle.border + "44"}`,
+            borderRadius: isLeft ? "4px 18px 18px 18px" : "18px 4px 18px 18px",
+            padding: "14px 18px",
+            position: "relative",
+            boxShadow: isActive
+              ? `0 0 0 3px ${bubbleStyle.border}66, 0 8px 32px rgba(0,0,0,0.3)`
+              : "0 8px 32px rgba(0,0,0,0.3)",
+            cursor: "pointer",
+            transition: "all 0.2s ease",
+          }}
+        >
+          <div style={{
+            position: "absolute", top: -1,
+            left: isLeft ? -1 : "auto", right: isLeft ? "auto" : -1,
+            width: 6, height: 6,
+            background: bubbleStyle.border, borderRadius: "50%",
+            boxShadow: `0 0 8px ${bubbleStyle.border}`,
+          }} />
+
+          {/* Share menu popup */}
+          {showShare && (
+            <div onClick={e => e.stopPropagation()}>
+              <ShareMenu
+                text={text}
+                keyword={keyword}
+                bubbleStyle={bubbleStyle}
+                isLeft={isLeft}
+                onClose={() => setShowShare(false)}
+                onThreadsCopy={handleThreadsShare}
+              />
+            </div>
+          )}
+
+          <div style={{
+            fontSize: "0.72rem", fontFamily: "'Courier Prime', monospace",
+            color: flash ? bubbleStyle.bg : bubbleStyle.label,
+            marginBottom: 6, letterSpacing: "0.15em", textTransform: "uppercase",
+            display: "flex", justifyContent: "space-between", alignItems: "center",
+          }}>
+            <span>{isLeft ? `// IDEA_${String(index + 1).padStart(2, "0")}` : `// INVERSE_${String(index + 1).padStart(2, "0")}`}</span>
+            {displayed.length >= text.length && (
+              <span style={{ opacity: 0.5, fontSize: "0.6rem", letterSpacing: "0.05em" }}>{DOUBLE_CLICK_LABEL[lang] || DOUBLE_CLICK_LABEL.en}</span>
+            )}
+          </div>
+          <p style={{
+            margin: 0, color: flash ? bubbleStyle.bg : "#F5F0EB",
+            fontFamily: "'DM Sans', 'Helvetica Neue', sans-serif",
+            fontSize: "1.25rem", lineHeight: 1.65, letterSpacing: "0.01em",
+            transition: "color 0.15s ease",
+          }}>{displayed}<span style={{
+            display: "inline-block", width: 2, height: "1em",
+            background: "#FFE066", marginLeft: 2, verticalAlign: "middle",
+            animation: displayed.length < text.length ? "blink 0.5s step-end infinite" : "none",
+          }} /></p>
+        </div>
+
+        {/* Action buttons — always visible, below bubble */}
+        {displayed.length >= text.length && (
+          <div style={{
+            display: "flex", gap: 6,
+            justifyContent: isLeft ? "flex-start" : "flex-end",
+          }}>
+            <button
+              onClick={e => { e.stopPropagation(); onSave(text); }}
+              onMouseEnter={() => playHover()}
+              style={{
+                background: isSaved ? "rgba(255,220,80,0.25)" : "rgba(255,255,255,0.08)",
+                border: `1px solid ${isSaved ? "rgba(255,220,80,0.6)" : "rgba(255,255,255,0.25)"}`,
+                borderRadius: 20, padding: "5px 14px",
+                color: isSaved ? "#FFE066" : "#E0D8CE",
+                fontFamily: "'Courier Prime', monospace",
+                fontSize: "0.6rem", letterSpacing: "0.1em",
+                cursor: "pointer", transition: "all 0.2s ease",
+                whiteSpace: "nowrap",
+              }}
+            >{isSaved ? "★ Saved" : "☆ Save"}</button>
+
+            <button
+              onClick={handleShareClick}
+              style={{
+                background: showShare ? "rgba(255,255,255,0.18)" : "rgba(255,255,255,0.08)",
+                border: `1px solid ${showShare ? "rgba(255,255,255,0.5)" : "rgba(255,255,255,0.25)"}`,
+                borderRadius: 20, padding: "5px 14px",
+                color: "#E0D8CE",
+                fontFamily: "'Courier Prime', monospace",
+                fontSize: "0.6rem", letterSpacing: "0.1em",
+                cursor: "pointer", transition: "all 0.2s ease",
+                whiteSpace: "nowrap",
+              }}
+            >↗ Share</button>
           </div>
         )}
-
-        <div style={{
-          fontSize: "0.72rem", fontFamily: "'Courier Prime', monospace",
-          color: flash ? bubbleStyle.bg : bubbleStyle.label,
-          marginBottom: 6, letterSpacing: "0.15em", textTransform: "uppercase",
-          display: "flex", justifyContent: "space-between", alignItems: "center",
-        }}>
-          <span>{isLeft ? `// IDEA_${String(index + 1).padStart(2, "0")}` : `// INVERSE_${String(index + 1).padStart(2, "0")}`}</span>
-          {displayed.length >= text.length && (
-            <span style={{ opacity: 0.5, fontSize: "0.6rem", letterSpacing: "0.05em" }}>{DOUBLE_CLICK_LABEL[lang] || DOUBLE_CLICK_LABEL.en}</span>
-          )}
-        </div>
-        <p style={{
-          margin: 0, color: flash ? bubbleStyle.bg : "#F5F0EB",
-          fontFamily: "'DM Sans', 'Helvetica Neue', sans-serif",
-          fontSize: "1.25rem", lineHeight: 1.65, letterSpacing: "0.01em",
-          transition: "color 0.15s ease",
-        }}>{displayed}<span style={{
-          display: "inline-block", width: 2, height: "1em",
-          background: "#FFE066", marginLeft: 2, verticalAlign: "middle",
-          animation: displayed.length < text.length ? "blink 0.5s step-end infinite" : "none",
-        }} /></p>
       </div>
-
-      {/* Action buttons — always visible, side of bubble */}
-      {displayed.length >= text.length && (
-        <div style={{
-          display: "flex", flexDirection: "column", gap: 5,
-          justifyContent: "center",
-          marginLeft: isLeft ? 8 : 0,
-          marginRight: isLeft ? 0 : 8,
-          order: isLeft ? 1 : -1,
-        }}>
-          <button
-            onClick={e => { e.stopPropagation(); onSave(text); }}
-            onMouseEnter={() => playHover()}
-            style={{
-              background: isSaved ? "rgba(255,220,80,0.25)" : "rgba(255,255,255,0.08)",
-              border: `1px solid ${isSaved ? "rgba(255,220,80,0.6)" : "rgba(255,255,255,0.25)"}`,
-              borderRadius: 20, padding: "5px 12px",
-              color: isSaved ? "#FFE066" : "#E0D8CE",
-              fontFamily: "'Courier Prime', monospace",
-              fontSize: "0.6rem", letterSpacing: "0.1em",
-              cursor: "pointer", transition: "all 0.2s ease",
-              whiteSpace: "nowrap",
-            }}
-          >{isSaved ? "★ Saved" : "☆ Save"}</button>
-
-          <button
-            onClick={handleShareClick}
-            style={{
-              background: showShare ? "rgba(255,255,255,0.18)" : "rgba(255,255,255,0.08)",
-              border: `1px solid ${showShare ? "rgba(255,255,255,0.5)" : "rgba(255,255,255,0.25)"}`,
-              borderRadius: 20, padding: "5px 12px",
-              color: "#E0D8CE",
-              fontFamily: "'Courier Prime', monospace",
-              fontSize: "0.6rem", letterSpacing: "0.1em",
-              cursor: "pointer", transition: "all 0.2s ease",
-              whiteSpace: "nowrap",
-            }}
-          >↗ Share</button>
-        </div>
-      )}
 
       {!isLeft && (
         <div style={{
