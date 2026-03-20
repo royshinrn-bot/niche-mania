@@ -61,8 +61,10 @@ function pickPantone() {
 // ── Web Audio ─────────────────────────────────────────────────────
 const ctx = typeof AudioContext !== "undefined" ? new AudioContext() : null;
 
+function resumeCtx() { if (ctx && ctx.state === "suspended") ctx.resume(); }
+
 function playGlitch() {
-  if (!ctx) return;
+  resumeCtx(); if (!ctx) return;
   const o = ctx.createOscillator(); const g = ctx.createGain();
   o.connect(g); g.connect(ctx.destination);
   o.type = "sawtooth";
@@ -73,7 +75,7 @@ function playGlitch() {
   o.start(); o.stop(ctx.currentTime + 0.12);
 }
 function playPop() {
-  if (!ctx) return;
+  resumeCtx(); if (!ctx) return;
   const o = ctx.createOscillator(); const g = ctx.createGain();
   o.connect(g); g.connect(ctx.destination);
   o.type = "sine";
@@ -84,7 +86,7 @@ function playPop() {
   o.start(); o.stop(ctx.currentTime + 0.06);
 }
 function playTypeTick() {
-  if (!ctx) return;
+  resumeCtx(); if (!ctx) return;
   const b = ctx.createOscillator(); const g = ctx.createGain();
   b.connect(g); g.connect(ctx.destination);
   b.type = "square"; b.frequency.value = 1200 + Math.random() * 400;
@@ -93,7 +95,7 @@ function playTypeTick() {
   b.start(); b.stop(ctx.currentTime + 0.03);
 }
 function playSuccess() {
-  if (!ctx) return;
+  resumeCtx(); if (!ctx) return;
   [300, 500, 700, 1000].forEach((f, i) => {
     const o = ctx.createOscillator(); const g = ctx.createGain();
     o.connect(g); g.connect(ctx.destination);
@@ -103,6 +105,99 @@ function playSuccess() {
     g.gain.exponentialRampToValueAtTime(0.001, t + 0.15);
     o.start(t); o.stop(t + 0.15);
   });
+}
+// Hover woosh — soft sweep up
+function playHover() {
+  resumeCtx(); if (!ctx) return;
+  const o = ctx.createOscillator(); const g = ctx.createGain();
+  o.connect(g); g.connect(ctx.destination);
+  o.type = "sine";
+  o.frequency.setValueAtTime(200, ctx.currentTime);
+  o.frequency.exponentialRampToValueAtTime(440, ctx.currentTime + 0.07);
+  g.gain.setValueAtTime(0.05, ctx.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.07);
+  o.start(); o.stop(ctx.currentTime + 0.07);
+}
+// Dive — deep thud + high ping (double-click drill)
+function playDive() {
+  resumeCtx(); if (!ctx) return;
+  // low thud
+  const o1 = ctx.createOscillator(); const g1 = ctx.createGain();
+  o1.connect(g1); g1.connect(ctx.destination);
+  o1.type = "sine"; o1.frequency.setValueAtTime(120, ctx.currentTime);
+  o1.frequency.exponentialRampToValueAtTime(40, ctx.currentTime + 0.18);
+  g1.gain.setValueAtTime(0.25, ctx.currentTime);
+  g1.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
+  o1.start(); o1.stop(ctx.currentTime + 0.2);
+  // high ping
+  const o2 = ctx.createOscillator(); const g2 = ctx.createGain();
+  o2.connect(g2); g2.connect(ctx.destination);
+  o2.type = "triangle"; o2.frequency.value = 1800;
+  g2.gain.setValueAtTime(0.1, ctx.currentTime + 0.05);
+  g2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.22);
+  o2.start(ctx.currentTime + 0.05); o2.stop(ctx.currentTime + 0.22);
+}
+// Whoosh back — sweep down
+function playWhooshBack() {
+  resumeCtx(); if (!ctx) return;
+  const o = ctx.createOscillator(); const g = ctx.createGain();
+  o.connect(g); g.connect(ctx.destination);
+  o.type = "sawtooth";
+  o.frequency.setValueAtTime(800, ctx.currentTime);
+  o.frequency.exponentialRampToValueAtTime(100, ctx.currentTime + 0.15);
+  g.gain.setValueAtTime(0.1, ctx.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
+  o.start(); o.stop(ctx.currentTime + 0.15);
+}
+// Dismiss — soft downward blip
+function playDismiss() {
+  resumeCtx(); if (!ctx) return;
+  const o = ctx.createOscillator(); const g = ctx.createGain();
+  o.connect(g); g.connect(ctx.destination);
+  o.type = "sine";
+  o.frequency.setValueAtTime(400, ctx.currentTime);
+  o.frequency.exponentialRampToValueAtTime(150, ctx.currentTime + 0.09);
+  g.gain.setValueAtTime(0.1, ctx.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.09);
+  o.start(); o.stop(ctx.currentTime + 0.09);
+}
+// Charge — rising energy for FLIP AGAIN
+function playCharge() {
+  resumeCtx(); if (!ctx) return;
+  [200, 350, 550, 800].forEach((f, i) => {
+    const o = ctx.createOscillator(); const g = ctx.createGain();
+    o.connect(g); g.connect(ctx.destination);
+    o.type = "square"; o.frequency.value = f;
+    const t = ctx.currentTime + i * 0.04;
+    g.gain.setValueAtTime(0.07, t);
+    g.gain.exponentialRampToValueAtTime(0.001, t + 0.07);
+    o.start(t); o.stop(t + 0.07);
+  });
+}
+// Input focus — subtle electronic hum
+function playFocus() {
+  resumeCtx(); if (!ctx) return;
+  const o = ctx.createOscillator(); const g = ctx.createGain();
+  o.connect(g); g.connect(ctx.destination);
+  o.type = "sine";
+  o.frequency.setValueAtTime(320, ctx.currentTime);
+  o.frequency.linearRampToValueAtTime(360, ctx.currentTime + 0.12);
+  g.gain.setValueAtTime(0.04, ctx.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.14);
+  o.start(); o.stop(ctx.currentTime + 0.14);
+}
+// Error buzz
+function playError() {
+  resumeCtx(); if (!ctx) return;
+  const o = ctx.createOscillator(); const g = ctx.createGain();
+  o.connect(g); g.connect(ctx.destination);
+  o.type = "sawtooth";
+  o.frequency.setValueAtTime(180, ctx.currentTime);
+  o.frequency.setValueAtTime(90, ctx.currentTime + 0.05);
+  o.frequency.setValueAtTime(180, ctx.currentTime + 0.1);
+  g.gain.setValueAtTime(0.13, ctx.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.18);
+  o.start(); o.stop(ctx.currentTime + 0.18);
 }
 
 // ── Floating particles ────────────────────────────────────────────
@@ -165,22 +260,142 @@ function detectLang(text) {
 }
 
 const DOUBLE_CLICK_LABEL = {
-  en: "double click to dive deeper ↓",
-  ko: "더블클릭으로 더 깊이 파고들기 ↓",
-  ja: "ダブルクリックでさらに深く ↓",
-  zh: "双击深入探索 ↓",
-  ar: "انقر مرتين للتعمق أكثر ↓",
-  es: "doble clic para profundizar ↓",
-  fr: "double-cliquez pour aller plus loin ↓",
-  de: "doppelklick für mehr tiefe ↓",
-  pt: "clique duplo para mergulhar mais fundo ↓",
+  en: "double click for business ideas ↓",
+  ko: "더블클릭으로 비즈니스 아이디어 보기 ↓",
+  ja: "ダブルクリックでビジネスアイデアへ ↓",
+  zh: "双击查看商业创意 ↓",
+  ar: "انقر مرتين لأفكار الأعمال ↓",
+  es: "doble clic para ideas de negocio ↓",
+  fr: "double-cliquez pour les idées business ↓",
+  de: "doppelklick für business-ideen ↓",
+  pt: "clique duplo para ideias de negócio ↓",
 };
 
+// ── Share popup ───────────────────────────────────────────────────
+function ShareMenu({ text, keyword, bubbleStyle, isLeft, onClose, onThreadsCopy }) {
+  const shareText = `💡 ${text}\n\n— via NICHE MANIA\nniche-mania.vercel.app\n\n#NicheMania #StartupIdea`;
+  const siteUrl = "https://niche-mania.vercel.app";
+
+  const handleX = () => {
+    playPop();
+    const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}`;
+    window.open(url, "_blank");
+    onClose();
+  };
+
+  const handleThreads = () => {
+    playPop();
+    onThreadsCopy("threads");
+  };
+
+  const handleFacebook = () => {
+    playPop();
+    const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(siteUrl)}&quote=${encodeURIComponent(shareText)}`;
+    window.open(url, "_blank");
+    onClose();
+  };
+
+  const handleInstagram = () => {
+    playPop();
+    onThreadsCopy("instagram");
+  };
+
+  const btnStyle = {
+    display: "flex", alignItems: "center", gap: 8,
+    background: "transparent",
+    border: "none", borderRadius: 8,
+    padding: "8px 12px", cursor: "pointer",
+    color: "#F5F0EB",
+    fontFamily: "'Courier Prime', monospace",
+    fontSize: "0.78rem", letterSpacing: "0.08em",
+    transition: "background 0.15s ease",
+    textAlign: "left",
+    width: "100%",
+  };
+
+  return (
+    <div style={{
+      position: "absolute",
+      bottom: "calc(100% + 8px)",
+      right: 0,
+      background: "rgba(10,8,6,0.95)",
+      backdropFilter: "blur(16px)",
+      border: `1px solid ${bubbleStyle.border}66`,
+      borderRadius: 12,
+      padding: "8px",
+      display: "flex", flexDirection: "column", gap: 2,
+      zIndex: 100,
+      boxShadow: `0 8px 32px rgba(0,0,0,0.5), 0 0 0 1px ${bubbleStyle.border}22`,
+      animation: "fadeUp 0.15s ease both",
+      minWidth: 180,
+    }}>
+      <button onClick={handleX}
+        onMouseEnter={e => { playHover(); e.currentTarget.style.background = "rgba(255,255,255,0.08)"; }}
+        onMouseLeave={e => e.currentTarget.style.background = "transparent"}
+        style={btnStyle}>
+        <span style={{ fontSize: "1rem", lineHeight: 1, width: 18, textAlign: "center" }}>𝕏</span>
+        <span>Post on X</span>
+      </button>
+
+      <button onClick={handleThreads}
+        onMouseEnter={e => { playHover(); e.currentTarget.style.background = "rgba(255,255,255,0.08)"; }}
+        onMouseLeave={e => e.currentTarget.style.background = "transparent"}
+        style={btnStyle}>
+        <span style={{ fontSize: "1rem", lineHeight: 1, width: 18, textAlign: "center" }}>◉</span>
+        <span>Copy for Threads</span>
+      </button>
+
+      <button onClick={handleFacebook}
+        onMouseEnter={e => { playHover(); e.currentTarget.style.background = "rgba(255,255,255,0.08)"; }}
+        onMouseLeave={e => e.currentTarget.style.background = "transparent"}
+        style={btnStyle}>
+        <span style={{ fontSize: "1rem", lineHeight: 1, width: 18, textAlign: "center" }}>f</span>
+        <span>Share on Facebook</span>
+      </button>
+
+      <button onClick={handleInstagram}
+        onMouseEnter={e => { playHover(); e.currentTarget.style.background = "rgba(255,255,255,0.08)"; }}
+        onMouseLeave={e => e.currentTarget.style.background = "transparent"}
+        style={btnStyle}>
+        <span style={{ fontSize: "1rem", lineHeight: 1, width: 18, textAlign: "center" }}>◎</span>
+        <span>Copy for Instagram</span>
+      </button>
+    </div>
+  );
+}
+
+// ── Toast notification ─────────────────────────────────────────────
+function Toast({ message, onDone }) {
+  useEffect(() => {
+    const t = setTimeout(onDone, 2200);
+    return () => clearTimeout(t);
+  }, [onDone]);
+  return (
+    <div style={{
+      position: "fixed", bottom: 48, left: "50%",
+      transform: "translateX(-50%)",
+      background: "rgba(10,8,6,0.92)",
+      backdropFilter: "blur(12px)",
+      border: "1px solid rgba(255,255,255,0.15)",
+      borderRadius: 24, padding: "10px 22px",
+      color: "#F5F0EB",
+      fontFamily: "'Courier Prime', monospace",
+      fontSize: "0.78rem", letterSpacing: "0.12em",
+      zIndex: 999,
+      animation: "fadeUp 0.2s ease both",
+      whiteSpace: "nowrap",
+      boxShadow: "0 8px 32px rgba(0,0,0,0.4)",
+    }}>{message}</div>
+  );
+}
+
 // ── Speech Bubble ─────────────────────────────────────────────────
-function Bubble({ text, index, palette, onDoubleClick, isDrillSource, lang }) {
-  const [visible, setVisible]   = useState(false);
+function Bubble({ text, index, palette, onDoubleClick, isDrillSource, lang, keyword, onToast, isSaved, onSave }) {
+  const [visible, setVisible]     = useState(false);
   const [displayed, setDisplayed] = useState("");
-  const [flash, setFlash]       = useState(false);
+  const [flash, setFlash]         = useState(false);
+  const [hovered, setHovered]     = useState(false);
+  const [showShare, setShowShare] = useState(false);
   const isLeft = index % 2 === 0;
 
   useEffect(() => {
@@ -199,11 +414,37 @@ function Bubble({ text, index, palette, onDoubleClick, isDrillSource, lang }) {
     return () => clearTimeout(t);
   }, [text, index]);
 
+  // Close share menu on outside click
+  useEffect(() => {
+    if (!showShare) return;
+    const handler = () => setShowShare(false);
+    setTimeout(() => document.addEventListener("click", handler), 10);
+    return () => document.removeEventListener("click", handler);
+  }, [showShare]);
+
   const handleDblClick = () => {
-    if (displayed.length < text.length) return; // still typing
+    if (displayed.length < text.length) return;
     setFlash(true);
     setTimeout(() => setFlash(false), 300);
+    playDive();
     onDoubleClick(text);
+  };
+
+  const handleShareClick = (e) => {
+    e.stopPropagation();
+    playPop();
+    setShowShare(v => !v);
+  };
+
+  const handleThreadsShare = (platform) => {
+    const shareText = `💡 ${text}\n\n— via NICHE MANIA\nniche-mania.vercel.app\n\n#NicheMania #StartupIdea`;
+    navigator.clipboard.writeText(shareText).then(() => {
+      setShowShare(false);
+      const msg = platform === "instagram"
+        ? "✓ copied — paste into Instagram!"
+        : "✓ copied — paste into Threads!";
+      onToast(msg);
+    });
   };
 
   const ideaStyle    = palette.ideaBubble    || { bg: "rgba(10,5,0,0.82)",  border: "#FFE066", label: "#FFE066" };
@@ -219,18 +460,23 @@ function Bubble({ text, index, palette, onDoubleClick, isDrillSource, lang }) {
       opacity: visible ? 1 : 0,
       transform: visible ? "translateY(0) scale(1)" : "translateY(20px) scale(0.85)",
       transition: "all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)",
+      alignItems: "flex-start",
     }}>
       {isLeft && (
         <div style={{
           width: 36, height: 36, borderRadius: "50%",
           background: "linear-gradient(135deg,#FFE066,#FF9900)",
           display: "flex", alignItems: "center", justifyContent: "center",
-          fontSize: 18, marginRight: 10, flexShrink: 0,
+          fontSize: 18, marginRight: 10, flexShrink: 0, marginTop: 4,
           boxShadow: "0 0 14px rgba(255,200,0,0.55)",
         }}>⚡</div>
       )}
+
+      {/* Bubble */}
       <div
         onDoubleClick={handleDblClick}
+        onMouseEnter={() => { playHover(); setHovered(true); }}
+        onMouseLeave={() => setHovered(false)}
         style={{
           maxWidth: "72%",
           background: flash ? bubbleStyle.border : bubbleStyle.bg,
@@ -253,6 +499,21 @@ function Bubble({ text, index, palette, onDoubleClick, isDrillSource, lang }) {
           background: bubbleStyle.border, borderRadius: "50%",
           boxShadow: `0 0 8px ${bubbleStyle.border}`,
         }} />
+
+        {/* Share menu popup */}
+        {showShare && (
+          <div onClick={e => e.stopPropagation()}>
+            <ShareMenu
+              text={text}
+              keyword={keyword}
+              bubbleStyle={bubbleStyle}
+              isLeft={isLeft}
+              onClose={() => setShowShare(false)}
+              onThreadsCopy={handleThreadsShare}
+            />
+          </div>
+        )}
+
         <div style={{
           fontSize: "0.72rem", fontFamily: "'Courier Prime', monospace",
           color: flash ? bubbleStyle.bg : bubbleStyle.label,
@@ -275,12 +536,53 @@ function Bubble({ text, index, palette, onDoubleClick, isDrillSource, lang }) {
           animation: displayed.length < text.length ? "blink 0.5s step-end infinite" : "none",
         }} /></p>
       </div>
+
+      {/* Action buttons — always visible, side of bubble */}
+      {displayed.length >= text.length && (
+        <div style={{
+          display: "flex", flexDirection: "column", gap: 5,
+          justifyContent: "center",
+          marginLeft: isLeft ? 8 : 0,
+          marginRight: isLeft ? 0 : 8,
+          order: isLeft ? 1 : -1,
+        }}>
+          <button
+            onClick={e => { e.stopPropagation(); onSave(text); }}
+            onMouseEnter={() => playHover()}
+            style={{
+              background: isSaved ? "rgba(255,220,80,0.25)" : "rgba(255,255,255,0.08)",
+              border: `1px solid ${isSaved ? "rgba(255,220,80,0.6)" : "rgba(255,255,255,0.25)"}`,
+              borderRadius: 20, padding: "5px 12px",
+              color: isSaved ? "#FFE066" : "#E0D8CE",
+              fontFamily: "'Courier Prime', monospace",
+              fontSize: "0.6rem", letterSpacing: "0.1em",
+              cursor: "pointer", transition: "all 0.2s ease",
+              whiteSpace: "nowrap",
+            }}
+          >{isSaved ? "★ Saved" : "☆ Save"}</button>
+
+          <button
+            onClick={handleShareClick}
+            style={{
+              background: showShare ? "rgba(255,255,255,0.18)" : "rgba(255,255,255,0.08)",
+              border: `1px solid ${showShare ? "rgba(255,255,255,0.5)" : "rgba(255,255,255,0.25)"}`,
+              borderRadius: 20, padding: "5px 12px",
+              color: "#E0D8CE",
+              fontFamily: "'Courier Prime', monospace",
+              fontSize: "0.6rem", letterSpacing: "0.1em",
+              cursor: "pointer", transition: "all 0.2s ease",
+              whiteSpace: "nowrap",
+            }}
+          >↗ Share</button>
+        </div>
+      )}
+
       {!isLeft && (
         <div style={{
           width: 36, height: 36, borderRadius: "50%",
           background: "linear-gradient(135deg,#FF6699,#AA00FF)",
           display: "flex", alignItems: "center", justifyContent: "center",
-          fontSize: 18, marginLeft: 10, flexShrink: 0,
+          fontSize: 18, marginLeft: 10, flexShrink: 0, marginTop: 4,
           boxShadow: "0 0 14px rgba(255,80,150,0.55)",
         }}>🔬</div>
       )}
@@ -299,6 +601,14 @@ export default function NicheMania() {
   const [drillIdea, setDrillIdea] = useState(null);   // the selected bubble text
   const [drillItems, setDrillItems] = useState([]);   // expanded sub-ideas
   const [drillLoading, setDrillLoading] = useState(false);
+  const [toast, setToast]             = useState(null);
+  const [savedIdeas, setSavedIdeas]   = useState(() => {
+    try { return JSON.parse(localStorage.getItem("nm_saved") || "[]"); } catch { return []; }
+  });
+  const [showSaved, setShowSaved]     = useState(false);
+  const [showGuide, setShowGuide]     = useState(() => {
+    try { return !localStorage.getItem("nm_visited"); } catch { return true; }
+  });
   const inputRef    = useRef(null);
   const bubblesRef  = useRef(null);
   const drillRef    = useRef(null);
@@ -335,15 +645,26 @@ export default function NicheMania() {
       ? `\n\nIDEAS ALREADY SHOWN (do NOT repeat or closely paraphrase any of these):\n${usedIdeas.current.map((t, i) => `${i + 1}. ${t}`).join("\n")}`
       : "";
 
+    const ANGLES = [
+      "Focus on the BIOLOGICAL / evolutionary angle — what does nature or the body reveal that contradicts mainstream belief?",
+      "Focus on the ECONOMIC / incentive angle — who profits from keeping the mainstream belief alive?",
+      "Focus on the HISTORICAL angle — when did this belief NOT exist, and why did it suddenly start?",
+      "Focus on the PHILOSOPHICAL / existential angle — what deep assumptions about reality does this completely shatter?",
+      "Focus on the ANTHROPOLOGICAL angle — how do other cultures live the exact opposite of this norm?",
+      "Focus on the SYSTEMS / second-order effects angle — what hidden consequences does mainstream thinking deliberately ignore?",
+      "Focus on the PSYCHOLOGICAL angle — what cognitive biases and social pressures manufacture this belief?",
+      "Focus on the TECHNOLOGICAL / future angle — how will this mainstream belief look embarrassingly absurd in 50 years?",
+      "Focus on the MINORITY REPORT angle — who are the fringe thinkers already living the radical opposite, and thriving?",
+      "Focus on the ARTISTIC / subcultural angle — how do rebels, artists, and outsiders subvert and expose this norm?",
+    ];
+    const randomAngle = ANGLES[Math.floor(Math.random() * ANGLES.length)];
+    const sessionSeed = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+    const angleBlock = `\n\nANGLE FOR THIS SESSION: ${randomAngle}\nSESSION SEED (use this to vary your output): ${sessionSeed}`;
+
     try {
       const response = await fetch("https://api.anthropic.com/v1/messages", {
         method: "POST",
-        headers: { 
-"Content-Type": "application/json",
-  "x-api-key": process.env.REACT_APP_ANTHROPIC_API_KEY,
-  "anthropic-version": "2023-06-01",
-  "anthropic-dangerous-direct-browser-access": "true",
-},
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           model: "claude-sonnet-4-20250514",
           max_tokens: 1000,
@@ -359,8 +680,9 @@ Rules:
 - NO bullet points, NO numbering — just separate each idea with a newline
 - Detect the language of the keyword and respond in that exact same language
 - Start each idea with a bold claim, then the subversive insight
-- Channel the energy of Nikola Tesla meets a zine editor`,
-          messages: [{ role: "user", content: `Keyword: "${keyword.trim()}"${previousBlock}` }],
+- Channel the energy of Nikola Tesla meets a zine editor
+- IMPORTANT: Each run must feel completely fresh and different — never repeat patterns from previous sessions`,
+          messages: [{ role: "user", content: `Keyword: "${keyword.trim()}"${previousBlock}${angleBlock}` }],
         }),
       });
       const data = await response.json();
@@ -374,6 +696,7 @@ Rules:
       playSuccess();
       setTimeout(() => bubblesRef.current?.scrollIntoView({ behavior: "smooth" }), 100);
     } catch {
+      playError();
       setIdeas(["⚠ Connection to the anti-mainstream dimension failed. Try again."]);
       setPalette(pickPantone());
       setStage("result");
@@ -392,24 +715,20 @@ Rules:
     try {
       const response = await fetch("https://api.anthropic.com/v1/messages", {
         method: "POST",
-        headers: {
-"Content-Type": "application/json",
-  "x-api-key": process.env.REACT_APP_ANTHROPIC_API_KEY,
-  "anthropic-version": "2023-06-01",
-  "anthropic-dangerous-direct-browser-access": "true",
-},
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           model: "claude-sonnet-4-20250514",
           max_tokens: 1200,
-          system: `You are NICHE MANIA's deep-drill engine. A user has selected a specific contrarian idea and wants to go deeper.
+          system: `You are NICHE MANIA's business opportunity engine. A contrarian insight has been selected — now turn it into REAL business opportunities.
 
-Given the original keyword and the selected idea, generate 5 more-detailed, actionable sub-ideas that expand specifically on that idea. These should be the next level of radicalism — more concrete, more specific, more inventive than the parent idea.
+Given the original keyword and the selected contrarian insight, generate 5 concrete startup / business / marketing ideas that DIRECTLY exploit this insight. These are for solo developers, startup founders, and marketers who want to build something nobody else is building.
 
 Rules:
-- Generate exactly 5 sub-ideas directly expanding the selected idea
-- Each must be more specific and actionable than the parent
-- Keep the contrarian, punk-inventor energy
-- 1-2 sentences each, punchy and memorable
+- Generate exactly 5 business ideas directly born from the selected insight
+- Each must be a real, actionable opportunity: a product, service, startup, niche brand, or marketing campaign
+- For each idea, make clear: WHO the target customer is, WHAT the product/service is, WHY it works because of the contrarian insight
+- Keep the punk-inventor energy but make it MONETIZABLE and specific
+- 1-2 sentences each, punchy and concrete
 - NO bullet points, NO numbering — separate with a newline
 - Detect the language of the keyword/idea and respond in that same language
 - Label each with a symbol prefix: ◎ ◉ ◈ ⊕ ⊗`,
@@ -423,11 +742,50 @@ Rules:
       playSuccess();
       setTimeout(() => drillRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 100);
     } catch {
+      playError();
       setDrillItems(["⚠ Deep dive failed. Try again."]);
     } finally {
       setDrillLoading(false);
     }
   }, [keyword, drillLoading]);
+
+  const handleSave = (text) => {
+    setSavedIdeas(prev => {
+      const already = prev.find(s => s.text === text);
+      let next;
+      if (already) {
+        next = prev.filter(s => s.text !== text);
+        playDismiss();
+      } else {
+        next = [{ text, keyword, savedAt: Date.now() }, ...prev];
+        playSuccess();
+      }
+      localStorage.setItem("nm_saved", JSON.stringify(next));
+      return next;
+    });
+  };
+
+  const handleDeleteSaved = (text) => {
+    setSavedIdeas(prev => {
+      const next = prev.filter(s => s.text !== text);
+      localStorage.setItem("nm_saved", JSON.stringify(next));
+      playDismiss();
+      return next;
+    });
+  };
+
+  const handleDrillFromSaved = (item) => {
+    // Switch to result stage with the saved keyword, then drill
+    setShowSaved(false);
+    setKeyword(item.keyword);
+    setStage("result");
+    setIdeas([item.text]);
+    setPalette(pickPantone());
+    playDive();
+    setTimeout(() => {
+      handleDrill(item.text);
+    }, 100);
+  };
 
   const handleReset = () => {
     playGlitch();
@@ -603,6 +961,7 @@ Rules:
                   value={keyword}
                   onChange={e => setKeyword(e.target.value)}
                   onKeyDown={e => e.key === "Enter" && handleBrainstorm()}
+                  onFocus={() => playFocus()}
                   placeholder="ex: sleep, coffee, loneliness..."
                   style={{
                     flex: 1,
@@ -632,6 +991,7 @@ Rules:
                     animation: keyword.trim() ? "pulseRing 2s infinite" : "none",
                     whiteSpace: "nowrap",
                   }}
+                  onMouseEnter={() => playHover()}
                 >FLIP IT ⚡</button>
               </div>
 
@@ -641,6 +1001,7 @@ Rules:
                     key={tag}
                     className="tag-btn"
                     onClick={() => { setKeyword(tag); playPop(); }}
+                    onMouseEnter={() => playHover()}
                     style={{
                       background: "transparent",
                       border: `1px solid ${palette.accent}55`,
@@ -765,6 +1126,7 @@ Rules:
                   fontSize: "0.8rem", cursor: "pointer",
                   transition: "all 0.2s ease", letterSpacing: "0.1em",
                 }}
+                onMouseEnter={() => playHover()}
               >← NEW FLIP</button>
             </div>
 
@@ -777,6 +1139,10 @@ Rules:
                   onDoubleClick={handleDrill}
                   isDrillSource={drillIdea === idea}
                   lang={detectLang(keyword)}
+                  keyword={keyword}
+                  onToast={(msg) => { setToast(msg); setTimeout(() => setToast(null), 2400); }}
+                  isSaved={savedIdeas.some(s => s.text === idea)}
+                  onSave={handleSave}
                 />
               ))}
             </div>
@@ -787,6 +1153,30 @@ Rules:
                 marginTop: "2rem",
                 animation: "fadeUp 0.5s ease both",
               }}>
+                {/* Back button */}
+                <button
+                  onClick={() => {
+                    setDrillIdea(null);
+                    setDrillItems([]);
+                    playWhooshBack();
+                    setTimeout(() => bubblesRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
+                  }}
+                  style={{
+                    display: "flex", alignItems: "center", gap: 6,
+                    background: "transparent",
+                    border: `1px solid ${palette.text}33`,
+                    borderRadius: 20, padding: "6px 16px",
+                    color: palette.text, opacity: 0.6,
+                    fontFamily: "'Courier Prime', monospace",
+                    fontSize: "0.72rem", letterSpacing: "0.15em",
+                    textTransform: "uppercase", cursor: "pointer",
+                    transition: "all 0.2s ease",
+                    marginBottom: "1.2rem",
+                  }}
+                  onMouseEnter={e => { playHover(); e.currentTarget.style.opacity = "1"; }}
+                  onMouseLeave={e => e.currentTarget.style.opacity = "0.6"}
+                >↑ back to ideas</button>
+
                 {/* Connector line */}
                 <div style={{
                   display: "flex", alignItems: "center", gap: 12, marginBottom: "1.2rem",
@@ -797,7 +1187,7 @@ Rules:
                     fontSize: "0.65rem", letterSpacing: "0.25em",
                     textTransform: "uppercase", color: palette.sub,
                     whiteSpace: "nowrap",
-                  }}>◈ deep dive</div>
+                  }}>◈ business ideas</div>
                   <div style={{ flex: 1, height: 1, background: `${palette.text}22` }} />
                 </div>
 
@@ -825,7 +1215,7 @@ Rules:
                       fontFamily: "'Courier Prime', monospace",
                       fontSize: "0.75rem", letterSpacing: "0.2em",
                       color: palette.sub, textTransform: "uppercase",
-                    }}>going deeper...</div>
+                    }}>building business angles...</div>
                   </div>
                 )}
 
@@ -864,7 +1254,7 @@ Rules:
                 {drillItems.length > 0 && (
                   <div style={{ textAlign: "center", marginTop: "1rem" }}>
                     <button
-                      onClick={() => { setDrillIdea(null); setDrillItems([]); playPop(); }}
+                      onClick={() => { setDrillIdea(null); setDrillItems([]); playDismiss(); }}
                       style={{
                         background: "transparent",
                         border: `1px solid ${palette.text}33`,
@@ -877,7 +1267,7 @@ Rules:
                       }}
                       onMouseEnter={e => e.currentTarget.style.opacity = "0.9"}
                       onMouseLeave={e => e.currentTarget.style.opacity = "0.55"}
-                    >✕ close deep dive</button>
+                    >✕ close business ideas</button>
                   </div>
                 )}
               </div>
@@ -901,8 +1291,9 @@ Rules:
                     fontSize: "1.05rem", letterSpacing: "0.2em",
                     cursor: "pointer", transition: "all 0.25s ease",
                   }}
-                  onMouseEnter={e => { e.currentTarget.style.opacity = "1"; e.currentTarget.style.background = "rgba(0,0,0,0.32)"; }}
+                  onMouseEnter={e => { playHover(); e.currentTarget.style.opacity = "1"; e.currentTarget.style.background = "rgba(0,0,0,0.32)"; }}
                   onMouseLeave={e => { e.currentTarget.style.opacity = "0.85"; e.currentTarget.style.background = "rgba(0,0,0,0.2)"; }}
+                  onMouseDown={() => playCharge()}
                 >⚡ FLIP AGAIN</button>
 
                 <button
@@ -916,13 +1307,365 @@ Rules:
                     fontSize: "1.05rem", letterSpacing: "0.2em",
                     cursor: "pointer", transition: "all 0.25s ease",
                   }}
-                  onMouseEnter={e => { e.currentTarget.style.opacity = "1"; e.currentTarget.style.background = "rgba(0,0,0,0.15)"; }}
+                  onMouseEnter={e => { playHover(); e.currentTarget.style.opacity = "1"; e.currentTarget.style.background = "rgba(0,0,0,0.15)"; }}
                   onMouseLeave={e => { e.currentTarget.style.opacity = "0.6"; e.currentTarget.style.background = "transparent"; }}
                 >← NEW FLIP</button>
               </div>
             )}
           </div>
         )}
+
+        {/* ── Guide Overlay ── */}
+        {showGuide && (() => {
+          const guideLang = detectLang(keyword);
+          const GUIDE_TEXT = {
+            en: {
+              how: "◈ how to use",
+              start: "LET'S FLIP REALITY ⚡",
+              steps: [
+                { icon: "⚡", title: "FLIP IT", desc: "Type any keyword and hit FLIP IT. You'll get 6 contrarian insights that completely shatter mainstream thinking." },
+                { icon: "🔬", title: "DOUBLE CLICK", desc: "Double-click any idea card to unlock 5 real business opportunities built directly from that contrarian insight." },
+                { icon: "★", title: "SAVE", desc: "Hit ☆ Save to keep ideas you love. Access them anytime from the ★ saved button — double-click to regenerate business ideas." },
+                { icon: "↗", title: "SHARE", desc: "Hit ↗ Share to post directly to X, Threads, Facebook, or Instagram." },
+              ],
+            },
+            ko: {
+              how: "◈ 사용 방법",
+              start: "현실을 뒤집어보자 ⚡",
+              steps: [
+                { icon: "⚡", title: "FLIP IT", desc: "키워드를 입력하고 FLIP IT을 누르면 상식을 완전히 뒤집는 6가지 반mainstream 인사이트가 나와요." },
+                { icon: "🔬", title: "더블클릭", desc: "마음에 드는 아이디어 카드를 더블클릭하면 그 인사이트를 기반으로 한 실제 비즈니스 아이디어 5가지를 보여줘요." },
+                { icon: "★", title: "저장", desc: "☆ Save 버튼으로 아이디어를 저장하세요. 우하단 ★ saved 버튼에서 언제든 꺼내볼 수 있고, 더블클릭하면 비즈니스 아이디어도 다시 볼 수 있어요." },
+                { icon: "↗", title: "공유", desc: "↗ Share 버튼으로 X, Threads, Facebook, Instagram에 바로 공유할 수 있어요." },
+              ],
+            },
+            ja: {
+              how: "◈ 使い方",
+              start: "現実をひっくり返そう ⚡",
+              steps: [
+                { icon: "⚡", title: "FLIP IT", desc: "キーワードを入力してFLIP ITを押すと、常識を完全に覆す6つの逆張りインサイトが生成されます。" },
+                { icon: "🔬", title: "ダブルクリック", desc: "気に入ったアイデアカードをダブルクリックすると、そのインサイトをもとにした5つのビジネスアイデアが表示されます。" },
+                { icon: "★", title: "保存", desc: "☆ SaveボタンでアイデアをローカルStorageに保存。右下の★ savedボタンでいつでも確認でき、ダブルクリックでビジネスアイデアも再表示できます。" },
+                { icon: "↗", title: "シェア", desc: "↗ ShareボタンでX・Threads・Facebook・Instagramに直接シェアできます。" },
+              ],
+            },
+            zh: {
+              how: "◈ 使用说明",
+              start: "颠覆现实，开始吧 ⚡",
+              steps: [
+                { icon: "⚡", title: "FLIP IT", desc: "输入关键词并点击 FLIP IT，获得6个完全颠覆主流思维的逆向洞察。" },
+                { icon: "🔬", title: "双击", desc: "双击任意想法卡片，即可解锁基于该洞察的5个真实商业机会。" },
+                { icon: "★", title: "保存", desc: "点击 ☆ Save 保存喜欢的想法。随时从右下角 ★ saved 按钮查看，双击可重新生成商业点子。" },
+                { icon: "↗", title: "分享", desc: "点击 ↗ Share 直接分享到 X、Threads、Facebook 或 Instagram。" },
+              ],
+            },
+            es: {
+              how: "◈ cómo usar",
+              start: "VOLTEEMOS LA REALIDAD ⚡",
+              steps: [
+                { icon: "⚡", title: "FLIP IT", desc: "Escribe una palabra clave y presiona FLIP IT. Obtendrás 6 ideas contrarias que destruyen el pensamiento convencional." },
+                { icon: "🔬", title: "DOBLE CLIC", desc: "Haz doble clic en cualquier tarjeta para desbloquear 5 oportunidades de negocio reales basadas en ese insight." },
+                { icon: "★", title: "GUARDAR", desc: "Pulsa ☆ Save para guardar ideas. Accede desde el botón ★ saved — haz doble clic para regenerar ideas de negocio." },
+                { icon: "↗", title: "COMPARTIR", desc: "Pulsa ↗ Share para publicar directamente en X, Threads, Facebook o Instagram." },
+              ],
+            },
+            fr: {
+              how: "◈ comment utiliser",
+              start: "RENVERSONS LA RÉALITÉ ⚡",
+              steps: [
+                { icon: "⚡", title: "FLIP IT", desc: "Saisissez un mot-clé et appuyez sur FLIP IT. Obtenez 6 idées contrariennes qui brisent la pensée conventionnelle." },
+                { icon: "🔬", title: "DOUBLE CLIC", desc: "Double-cliquez sur une carte pour débloquer 5 opportunités business réelles basées sur cet insight." },
+                { icon: "★", title: "SAUVEGARDER", desc: "Cliquez ☆ Save pour conserver vos idées. Accédez-y via le bouton ★ saved — double-cliquez pour régénérer les idées business." },
+                { icon: "↗", title: "PARTAGER", desc: "Cliquez ↗ Share pour publier sur X, Threads, Facebook ou Instagram." },
+              ],
+            },
+            de: {
+              how: "◈ anleitung",
+              start: "REALITÄT UMKEHREN ⚡",
+              steps: [
+                { icon: "⚡", title: "FLIP IT", desc: "Gib ein Stichwort ein und drücke FLIP IT. Du erhältst 6 konträre Einsichten, die konventionelles Denken völlig auf den Kopf stellen." },
+                { icon: "🔬", title: "DOPPELKLICK", desc: "Doppelklicke auf eine Karte, um 5 echte Geschäftsmöglichkeiten basierend auf diesem Insight freizuschalten." },
+                { icon: "★", title: "SPEICHERN", desc: "Klicke ☆ Save zum Speichern. Zugriff über den ★ saved Button — Doppelklick regeneriert Geschäftsideen." },
+                { icon: "↗", title: "TEILEN", desc: "Klicke ↗ Share, um direkt auf X, Threads, Facebook oder Instagram zu teilen." },
+              ],
+            },
+            pt: {
+              how: "◈ como usar",
+              start: "VAMOS VIRAR A REALIDADE ⚡",
+              steps: [
+                { icon: "⚡", title: "FLIP IT", desc: "Digite uma palavra-chave e clique em FLIP IT. Você receberá 6 insights contrários que destroem o pensamento convencional." },
+                { icon: "🔬", title: "DUPLO CLIQUE", desc: "Dê duplo clique em qualquer card para desbloquear 5 oportunidades de negócio reais baseadas nesse insight." },
+                { icon: "★", title: "SALVAR", desc: "Clique ☆ Save para guardar ideias. Acesse pelo botão ★ saved — duplo clique regenera as ideias de negócio." },
+                { icon: "↗", title: "COMPARTILHAR", desc: "Clique ↗ Share para publicar no X, Threads, Facebook ou Instagram." },
+              ],
+            },
+          };
+          const g = GUIDE_TEXT[guideLang] || GUIDE_TEXT.en;
+          return (
+            <div style={{
+              position: "fixed", inset: 0, zIndex: 300,
+              background: "rgba(6,4,2,0.96)",
+              backdropFilter: "blur(12px)",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              padding: "2rem",
+              animation: "fadeUp 0.4s ease both",
+            }}>
+              <div style={{
+                width: "100%", maxWidth: 480,
+                display: "flex", flexDirection: "column", gap: "1.6rem",
+              }}>
+                {/* Logo */}
+                <div>
+                  <div style={{
+                    fontFamily: "'Bebas Neue', cursive",
+                    fontSize: "clamp(3rem, 10vw, 5rem)",
+                    letterSpacing: "0.06em", lineHeight: 0.9,
+                    color: "#F5F0EB",
+                  }}>NICHE<br />MANIA</div>
+                  <div style={{
+                    fontFamily: "'Courier Prime', monospace",
+                    fontSize: "0.65rem", letterSpacing: "0.3em",
+                    color: "rgba(255,255,255,0.35)", textTransform: "uppercase",
+                    marginTop: "0.5rem",
+                  }}>{g.how}</div>
+                </div>
+
+                {/* Steps */}
+                {g.steps.map((step, i) => (
+                  <div key={i} style={{
+                    display: "flex", gap: "1rem", alignItems: "flex-start",
+                    animation: `fadeUp 0.4s ease ${0.1 + i * 0.08}s both`,
+                    opacity: 0,
+                  }}>
+                    <div style={{
+                      width: 36, height: 36, borderRadius: "50%", flexShrink: 0,
+                      background: "rgba(255,255,255,0.07)",
+                      border: "1px solid rgba(255,255,255,0.15)",
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      fontSize: "1rem",
+                    }}>{step.icon}</div>
+                    <div>
+                      <div style={{
+                        fontFamily: "'Courier Prime', monospace",
+                        fontSize: "0.65rem", letterSpacing: "0.2em",
+                        color: "rgba(255,255,255,0.45)", textTransform: "uppercase",
+                        marginBottom: 4,
+                      }}>{step.title}</div>
+                      <p style={{
+                        margin: 0, color: "rgba(255,255,255,0.75)",
+                        fontFamily: "'DM Sans', sans-serif",
+                        fontSize: "0.9rem", lineHeight: 1.6,
+                      }}>{step.desc}</p>
+                    </div>
+                  </div>
+                ))}
+
+                {/* Start button */}
+                <button
+                  onClick={() => {
+                    setShowGuide(false);
+                    try { localStorage.setItem("nm_visited", "1"); } catch {}
+                    playSuccess();
+                  }}
+                  style={{
+                    background: "#F5F0EB",
+                    border: "none", borderRadius: 30,
+                    padding: "14px 0", width: "100%",
+                    color: "#1C0A00",
+                    fontFamily: "'Bebas Neue', cursive",
+                    fontSize: "1.3rem", letterSpacing: "0.2em",
+                    cursor: "pointer", transition: "all 0.2s ease",
+                    marginTop: "0.5rem",
+                    animation: "fadeUp 0.4s ease 0.5s both", opacity: 0,
+                  }}
+                  onMouseEnter={e => { playHover(); e.currentTarget.style.transform = "scale(1.02)"; }}
+                  onMouseLeave={e => e.currentTarget.style.transform = "scale(1)"}
+                >{g.start}</button>
+              </div>
+            </div>
+          );
+        })()}
+
+        {/* ? Help button — always visible */}
+        <button
+          onClick={() => { setShowGuide(true); playPop(); }}
+          onMouseEnter={() => playHover()}
+          style={{
+            position: "fixed", top: 20, right: 20,
+            width: 34, height: 34, borderRadius: "50%",
+            background: "rgba(255,255,255,0.08)",
+            border: "1px solid rgba(255,255,255,0.2)",
+            color: "rgba(255,255,255,0.6)",
+            fontFamily: "'Courier Prime', monospace",
+            fontSize: "0.85rem", cursor: "pointer",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            zIndex: 198, transition: "all 0.2s ease",
+          }}
+          onMouseEnter={e => { playHover(); e.currentTarget.style.background = "rgba(255,255,255,0.15)"; e.currentTarget.style.color = "#F5F0EB"; }}
+          onMouseLeave={e => { e.currentTarget.style.background = "rgba(255,255,255,0.08)"; e.currentTarget.style.color = "rgba(255,255,255,0.6)"; }}
+        >?</button>
+
+        {/* ── Saved Ideas Panel ── */}
+        {/* Overlay */}
+        {showSaved && (
+          <div
+            onClick={() => { setShowSaved(false); playDismiss(); }}
+            style={{
+              position: "fixed", inset: 0, zIndex: 200,
+              background: "rgba(0,0,0,0.45)", backdropFilter: "blur(2px)",
+            }}
+          />
+        )}
+
+        {/* Slide panel */}
+        <div style={{
+          position: "fixed", top: 0, right: 0, bottom: 0,
+          width: "min(380px, 92vw)",
+          background: "rgba(12,8,4,0.97)",
+          backdropFilter: "blur(20px)",
+          borderLeft: "1px solid rgba(255,255,255,0.1)",
+          zIndex: 201,
+          transform: showSaved ? "translateX(0)" : "translateX(100%)",
+          transition: "transform 0.35s cubic-bezier(0.4, 0, 0.2, 1)",
+          display: "flex", flexDirection: "column",
+          boxShadow: "-12px 0 40px rgba(0,0,0,0.5)",
+        }}>
+          {/* Panel header */}
+          <div style={{
+            padding: "1.4rem 1.4rem 1rem",
+            borderBottom: "1px solid rgba(255,255,255,0.08)",
+            display: "flex", alignItems: "center", justifyContent: "space-between",
+          }}>
+            <div>
+              <div style={{
+                fontFamily: "'Bebas Neue', cursive",
+                fontSize: "1.6rem", letterSpacing: "0.08em",
+                color: "#F5F0EB",
+              }}>SAVED IDEAS</div>
+              <div style={{
+                fontFamily: "'Courier Prime', monospace",
+                fontSize: "0.62rem", letterSpacing: "0.2em",
+                color: "rgba(255,255,255,0.35)", textTransform: "uppercase",
+                marginTop: 2,
+              }}>{savedIdeas.length} idea{savedIdeas.length !== 1 ? "s" : ""} saved</div>
+            </div>
+            <button
+              onClick={() => { setShowSaved(false); playDismiss(); }}
+              onMouseEnter={() => playHover()}
+              style={{
+                background: "rgba(255,255,255,0.06)",
+                border: "1px solid rgba(255,255,255,0.12)",
+                borderRadius: "50%", width: 34, height: 34,
+                color: "#F5F0EB", fontSize: "1rem",
+                cursor: "pointer", transition: "all 0.2s ease",
+                display: "flex", alignItems: "center", justifyContent: "center",
+              }}
+            >✕</button>
+          </div>
+
+          {/* Panel body */}
+          <div style={{ flex: 1, overflowY: "auto", padding: "1rem 1.4rem" }}>
+            {savedIdeas.length === 0 ? (
+              <div style={{
+                textAlign: "center", padding: "3rem 1rem",
+                color: "rgba(255,255,255,0.25)",
+                fontFamily: "'Courier Prime', monospace",
+                fontSize: "0.8rem", letterSpacing: "0.1em",
+                lineHeight: 1.8,
+              }}>
+                <div style={{ fontSize: "2rem", marginBottom: "1rem", opacity: 0.3 }}>☆</div>
+                no saved ideas yet<br />
+                hover a card and hit ☆ save
+              </div>
+            ) : (
+              savedIdeas.map((item, i) => (
+                <div
+                  key={item.savedAt}
+                  onDoubleClick={() => handleDrillFromSaved(item)}
+                  style={{
+                    background: "rgba(255,255,255,0.04)",
+                    border: "1px solid rgba(255,255,255,0.08)",
+                    borderRadius: 12, padding: "12px 14px",
+                    marginBottom: "0.8rem",
+                    animation: `fadeUp 0.3s ease ${i * 0.05}s both`,
+                    position: "relative",
+                    cursor: "pointer",
+                    transition: "background 0.2s ease",
+                  }}
+                  onMouseEnter={e => { playHover(); e.currentTarget.style.background = "rgba(255,255,255,0.08)"; }}
+                  onMouseLeave={e => e.currentTarget.style.background = "rgba(255,255,255,0.04)"}
+                >
+                  <div style={{
+                    fontFamily: "'Courier Prime', monospace",
+                    fontSize: "0.58rem", letterSpacing: "0.2em",
+                    color: "rgba(255,255,255,0.3)", textTransform: "uppercase",
+                    marginBottom: 6,
+                    display: "flex", justifyContent: "space-between",
+                  }}>
+                    <span>◈ {item.keyword}</span>
+                    <span style={{ opacity: 0.4 }}>double click ↗</span>
+                  </div>
+                  <p style={{
+                    margin: 0, color: "#F0EBE3",
+                    fontFamily: "'DM Sans', sans-serif",
+                    fontSize: "0.95rem", lineHeight: 1.6,
+                    paddingRight: 28,
+                  }}>{item.text}</p>
+                  <button
+                    onClick={e => { e.stopPropagation(); handleDeleteSaved(item.text); }}
+                    style={{
+                      position: "absolute", top: 10, right: 10,
+                      background: "transparent",
+                      border: "none", color: "rgba(255,255,255,0.2)",
+                      fontSize: "0.9rem", cursor: "pointer",
+                      transition: "color 0.2s ease", lineHeight: 1,
+                      padding: 2,
+                    }}
+                    onMouseEnter={e => { playHover(); e.currentTarget.style.color = "#FF6666"; }}
+                    onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.2)"}
+                  >✕</button>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+
+        {/* Floating saved button */}
+        <button
+          onClick={() => { setShowSaved(v => !v); playPop(); }}
+          onMouseEnter={() => playHover()}
+          style={{
+            position: "fixed", bottom: 28, right: 24,
+            background: savedIdeas.length > 0 ? palette.text : "rgba(20,14,8,0.85)",
+            border: `1.5px solid ${savedIdeas.length > 0 ? palette.text : "rgba(255,255,255,0.2)"}`,
+            borderRadius: 28, padding: "10px 18px",
+            color: savedIdeas.length > 0 ? palette.bg : "rgba(255,255,255,0.5)",
+            fontFamily: "'Courier Prime', monospace",
+            fontSize: "0.72rem", letterSpacing: "0.15em", textTransform: "uppercase",
+            cursor: "pointer", zIndex: 199,
+            display: "flex", alignItems: "center", gap: 8,
+            boxShadow: savedIdeas.length > 0 ? "0 4px 20px rgba(0,0,0,0.4)" : "none",
+            transition: "all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)",
+            backdropFilter: "blur(10px)",
+          }}
+        >
+          <span>★</span>
+          <span>saved</span>
+          {savedIdeas.length > 0 && (
+            <span style={{
+              background: "#FF4444",
+              color: "#fff",
+              borderRadius: "50%",
+              width: 18, height: 18,
+              fontSize: "0.6rem",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              fontWeight: "bold",
+            }}>{savedIdeas.length}</span>
+          )}
+        </button>
+
+        {/* Toast */}
+        {toast && <Toast message={toast} onDone={() => setToast(null)} />}
 
         {/* Footer */}
         <div style={{
