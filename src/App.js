@@ -394,7 +394,6 @@ function Bubble({ text, index, palette, onDoubleClick, isDrillSource, lang, keyw
   const [visible, setVisible]     = useState(false);
   const [displayed, setDisplayed] = useState("");
   const [flash, setFlash]         = useState(false);
-  const [hovered, setHovered]     = useState(false);
   const [showShare, setShowShare] = useState(false);
   const isLeft = index % 2 === 0;
 
@@ -475,8 +474,8 @@ function Bubble({ text, index, palette, onDoubleClick, isDrillSource, lang, keyw
       {/* Bubble */}
       <div
         onDoubleClick={handleDblClick}
-        onMouseEnter={() => { playHover(); setHovered(true); }}
-        onMouseLeave={() => setHovered(false)}
+        onMouseEnter={() => { playHover(); }}
+        onMouseLeave={() => {}}
         style={{
           maxWidth: "72%",
           background: flash ? bubbleStyle.border : bubbleStyle.bg,
@@ -1489,7 +1488,6 @@ Rules:
         {/* ? Help button — always visible */}
         <button
           onClick={() => { setShowGuide(true); playPop(); }}
-          onMouseEnter={() => playHover()}
           style={{
             position: "fixed", top: 20, right: 20,
             width: 34, height: 34, borderRadius: "50%",
