@@ -605,9 +605,7 @@ export default function NicheMania() {
     try { return JSON.parse(localStorage.getItem("nm_saved") || "[]"); } catch { return []; }
   });
   const [showSaved, setShowSaved]     = useState(false);
-  const [showGuide, setShowGuide]     = useState(() => {
-    try { return !localStorage.getItem("nm_visited"); } catch { return true; }
-  });
+  const [showGuide, setShowGuide]     = useState(false);
   const inputRef    = useRef(null);
   const bubblesRef  = useRef(null);
   const drillRef    = useRef(null);
@@ -1413,20 +1411,36 @@ Rules:
                 width: "100%", maxWidth: 480,
                 display: "flex", flexDirection: "column", gap: "1.6rem",
               }}>
-                {/* Logo */}
-                <div>
-                  <div style={{
-                    fontFamily: "'Bebas Neue', cursive",
-                    fontSize: "clamp(3rem, 10vw, 5rem)",
-                    letterSpacing: "0.06em", lineHeight: 0.9,
-                    color: "#F5F0EB",
-                  }}>NICHE<br />MANIA</div>
-                  <div style={{
-                    fontFamily: "'Courier Prime', monospace",
-                    fontSize: "0.65rem", letterSpacing: "0.3em",
-                    color: "rgba(255,255,255,0.35)", textTransform: "uppercase",
-                    marginTop: "0.5rem",
-                  }}>{g.how}</div>
+                {/* Logo + X button */}
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                  <div>
+                    <div style={{
+                      fontFamily: "'Bebas Neue', cursive",
+                      fontSize: "clamp(3rem, 10vw, 5rem)",
+                      letterSpacing: "0.06em", lineHeight: 0.9,
+                      color: "#F5F0EB",
+                    }}>NICHE<br />MANIA</div>
+                    <div style={{
+                      fontFamily: "'Courier Prime', monospace",
+                      fontSize: "0.65rem", letterSpacing: "0.3em",
+                      color: "rgba(255,255,255,0.35)", textTransform: "uppercase",
+                      marginTop: "0.5rem",
+                    }}>{g.how}</div>
+                  </div>
+                  <button
+                    onClick={() => { setShowGuide(false); playDismiss(); }}
+                    style={{
+                      background: "rgba(255,255,255,0.08)",
+                      border: "1px solid rgba(255,255,255,0.15)",
+                      borderRadius: "50%", width: 36, height: 36,
+                      color: "#F5F0EB", fontSize: "1rem",
+                      cursor: "pointer", transition: "all 0.2s ease",
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      flexShrink: 0, marginTop: 4,
+                    }}
+                    onMouseEnter={e => { playHover(); e.currentTarget.style.background = "rgba(255,255,255,0.18)"; }}
+                    onMouseLeave={e => e.currentTarget.style.background = "rgba(255,255,255,0.08)"}
+                  >✕</button>
                 </div>
 
                 {/* Steps */}
@@ -1459,13 +1473,9 @@ Rules:
                   </div>
                 ))}
 
-                {/* Start button */}
+                {/* Close button */}
                 <button
-                  onClick={() => {
-                    setShowGuide(false);
-                    try { localStorage.setItem("nm_visited", "1"); } catch {}
-                    playSuccess();
-                  }}
+                  onClick={() => { setShowGuide(false); playDismiss(); }}
                   style={{
                     background: "#F5F0EB",
                     border: "none", borderRadius: 30,
@@ -1479,7 +1489,7 @@ Rules:
                   }}
                   onMouseEnter={e => { playHover(); e.currentTarget.style.transform = "scale(1.02)"; }}
                   onMouseLeave={e => e.currentTarget.style.transform = "scale(1)"}
-                >{g.start}</button>
+                >✕ CLOSE</button>
               </div>
             </div>
           );
