@@ -624,6 +624,7 @@ export default function NicheMania() {
   const handleBrainstorm = useCallback(async () => {
     if (!keyword.trim() || loading) return;
     playGlitch();
+    setShowGuide(false);
     setLoading(true);
     setStage("thinking");
     setIdeas([]);
@@ -1398,50 +1399,51 @@ Rules:
           };
           const g = GUIDE_TEXT[guideLang] || GUIDE_TEXT.en;
           return (
+            // dim background — tap to close
             <div
               onClick={() => { setShowGuide(false); playDismiss(); }}
               style={{
                 position: "fixed", inset: 0, zIndex: 300,
-                background: "rgba(6,4,2,0.96)",
-                backdropFilter: "blur(12px)",
+                background: "rgba(0,0,0,0.6)",
+                backdropFilter: "blur(6px)",
                 display: "flex", alignItems: "center", justifyContent: "center",
-                padding: "2rem",
-                animation: "fadeUp 0.4s ease both",
+                padding: "1.5rem",
+                animation: "fadeUp 0.25s ease both",
               }}>
+              {/* Modal card */}
               <div
                 onClick={e => e.stopPropagation()}
                 style={{
-                  width: "100%", maxWidth: 480,
-                  display: "flex", flexDirection: "column", gap: "1.6rem",
+                  width: "100%", maxWidth: 420,
+                  background: "rgba(14,10,6,0.97)",
+                  border: "1px solid rgba(255,255,255,0.12)",
+                  borderRadius: 20,
+                  padding: "1.4rem",
+                  display: "flex", flexDirection: "column", gap: "1.2rem",
+                  boxShadow: "0 24px 60px rgba(0,0,0,0.6)",
+                  maxHeight: "80vh",
+                  overflowY: "auto",
                 }}>
-                {/* Logo + X button */}
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-                  <div>
-                    <div style={{
-                      fontFamily: "'Bebas Neue', cursive",
-                      fontSize: "clamp(3rem, 10vw, 5rem)",
-                      letterSpacing: "0.06em", lineHeight: 0.9,
-                      color: "#F5F0EB",
-                    }}>NICHE<br />MANIA</div>
-                    <div style={{
-                      fontFamily: "'Courier Prime', monospace",
-                      fontSize: "0.65rem", letterSpacing: "0.3em",
-                      color: "rgba(255,255,255,0.35)", textTransform: "uppercase",
-                      marginTop: "0.5rem",
-                    }}>{g.how}</div>
-                  </div>
+
+                {/* Header row */}
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <div style={{
+                    fontFamily: "'Courier Prime', monospace",
+                    fontSize: "0.62rem", letterSpacing: "0.3em",
+                    color: "rgba(255,255,255,0.4)", textTransform: "uppercase",
+                  }}>{g.how}</div>
                   <button
                     onClick={() => { setShowGuide(false); playDismiss(); }}
                     style={{
                       background: "rgba(255,255,255,0.08)",
                       border: "1px solid rgba(255,255,255,0.15)",
-                      borderRadius: "50%", width: 36, height: 36,
+                      borderRadius: "50%", width: 32, height: 32,
                       color: "#F5F0EB", fontSize: "1rem",
                       cursor: "pointer", transition: "all 0.2s ease",
                       display: "flex", alignItems: "center", justifyContent: "center",
-                      flexShrink: 0, marginTop: 4,
+                      flexShrink: 0,
                     }}
-                    onMouseEnter={e => { playHover(); e.currentTarget.style.background = "rgba(255,255,255,0.18)"; }}
+                    onMouseEnter={e => { playHover(); e.currentTarget.style.background = "rgba(255,255,255,0.2)"; }}
                     onMouseLeave={e => e.currentTarget.style.background = "rgba(255,255,255,0.08)"}
                   >✕</button>
                 </div>
@@ -1449,50 +1451,38 @@ Rules:
                 {/* Steps */}
                 {g.steps.map((step, i) => (
                   <div key={i} style={{
-                    display: "flex", gap: "1rem", alignItems: "flex-start",
-                    animation: `fadeUp 0.4s ease ${0.1 + i * 0.08}s both`,
-                    opacity: 0,
+                    display: "flex", gap: "0.9rem", alignItems: "flex-start",
                   }}>
                     <div style={{
-                      width: 36, height: 36, borderRadius: "50%", flexShrink: 0,
+                      width: 32, height: 32, borderRadius: "50%", flexShrink: 0,
                       background: "rgba(255,255,255,0.07)",
-                      border: "1px solid rgba(255,255,255,0.15)",
+                      border: "1px solid rgba(255,255,255,0.12)",
                       display: "flex", alignItems: "center", justifyContent: "center",
-                      fontSize: "1rem",
+                      fontSize: "0.9rem",
                     }}>{step.icon}</div>
                     <div>
                       <div style={{
                         fontFamily: "'Courier Prime', monospace",
-                        fontSize: "0.65rem", letterSpacing: "0.2em",
-                        color: "rgba(255,255,255,0.45)", textTransform: "uppercase",
-                        marginBottom: 4,
+                        fontSize: "0.6rem", letterSpacing: "0.2em",
+                        color: "rgba(255,255,255,0.4)", textTransform: "uppercase",
+                        marginBottom: 3,
                       }}>{step.title}</div>
                       <p style={{
-                        margin: 0, color: "rgba(255,255,255,0.75)",
+                        margin: 0, color: "rgba(255,255,255,0.8)",
                         fontFamily: "'DM Sans', sans-serif",
-                        fontSize: "0.9rem", lineHeight: 1.6,
+                        fontSize: "0.85rem", lineHeight: 1.55,
                       }}>{step.desc}</p>
                     </div>
                   </div>
                 ))}
 
-                {/* Close button */}
-                <button
-                  onClick={() => { setShowGuide(false); playDismiss(); }}
-                  style={{
-                    background: "#F5F0EB",
-                    border: "none", borderRadius: 30,
-                    padding: "14px 0", width: "100%",
-                    color: "#1C0A00",
-                    fontFamily: "'Bebas Neue', cursive",
-                    fontSize: "1.3rem", letterSpacing: "0.2em",
-                    cursor: "pointer", transition: "all 0.2s ease",
-                    marginTop: "0.5rem",
-                    animation: "fadeUp 0.4s ease 0.5s both", opacity: 0,
-                  }}
-                  onMouseEnter={e => { playHover(); e.currentTarget.style.transform = "scale(1.02)"; }}
-                  onMouseLeave={e => e.currentTarget.style.transform = "scale(1)"}
-                >✕ CLOSE</button>
+                {/* hint */}
+                <div style={{
+                  textAlign: "center",
+                  fontFamily: "'Courier Prime', monospace",
+                  fontSize: "0.58rem", letterSpacing: "0.15em",
+                  color: "rgba(255,255,255,0.2)", textTransform: "uppercase",
+                }}>tap outside or ✕ to close</div>
               </div>
             </div>
           );
