@@ -1670,16 +1670,15 @@ Rules:
 
         {/* Footer */}
         <div style={{
-          position: "fixed", bottom: 0, left: 0, right: 0,
-          padding: "0.75rem",
-          background: `linear-gradient(0deg, ${palette.bg} 55%, transparent)`,
+          width: "100%",
+          padding: "2rem 0 1rem",
           textAlign: "center",
           fontSize: "0.58rem", color: palette.sub,
           letterSpacing: "0.3em", textTransform: "uppercase",
           fontFamily: "'Courier Prime', monospace",
           opacity: 0.55,
-          zIndex: 10,
           transition: "all 0.8s ease",
+          marginTop: "auto",
         }}>
           niche mania ◈ for rebels, inventors &amp; minority thinkers
         </div>
