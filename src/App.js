@@ -1399,18 +1399,22 @@ Rules:
           };
           const g = GUIDE_TEXT[guideLang] || GUIDE_TEXT.en;
           return (
-            <div style={{
-              position: "fixed", inset: 0, zIndex: 300,
-              background: "rgba(6,4,2,0.96)",
-              backdropFilter: "blur(12px)",
-              display: "flex", alignItems: "center", justifyContent: "center",
-              padding: "2rem",
-              animation: "fadeUp 0.4s ease both",
-            }}>
-              <div style={{
-                width: "100%", maxWidth: 480,
-                display: "flex", flexDirection: "column", gap: "1.6rem",
+            <div
+              onClick={() => { setShowGuide(false); playDismiss(); }}
+              style={{
+                position: "fixed", inset: 0, zIndex: 300,
+                background: "rgba(6,4,2,0.96)",
+                backdropFilter: "blur(12px)",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                padding: "2rem",
+                animation: "fadeUp 0.4s ease both",
               }}>
+              <div
+                onClick={e => e.stopPropagation()}
+                style={{
+                  width: "100%", maxWidth: 480,
+                  display: "flex", flexDirection: "column", gap: "1.6rem",
+                }}>
                 {/* Logo + X button */}
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
                   <div>
