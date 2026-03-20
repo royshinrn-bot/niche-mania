@@ -1232,17 +1232,36 @@ Rules:
                       fontSize: "0.7rem", color: palette.text, flexShrink: 0, marginTop: 4,
                       fontFamily: "'Courier Prime', monospace",
                     }}>{i + 1}</div>
-                    <div style={{
-                      background: "rgba(0,0,0,0.25)", backdropFilter: "blur(8px)",
-                      border: `1px solid ${palette.text}22`,
-                      borderRadius: "10px 18px 18px 18px",
-                      padding: "12px 16px", flex: 1,
-                    }}>
+                    <div
+                      onDoubleClick={() => {
+                        navigator.clipboard.writeText(item).then(() => {
+                          playPop();
+                          setToast("✓ copied!");
+                          setTimeout(() => setToast(null), 2000);
+                        });
+                      }}
+                      style={{
+                        background: "rgba(0,0,0,0.25)", backdropFilter: "blur(8px)",
+                        border: `1px solid ${palette.text}22`,
+                        borderRadius: "10px 18px 18px 18px",
+                        padding: "12px 16px", flex: 1,
+                        cursor: "copy",
+                        transition: "border 0.2s ease",
+                      }}
+                      onMouseEnter={e => e.currentTarget.style.border = `1px solid ${palette.text}55`}
+                      onMouseLeave={e => e.currentTarget.style.border = `1px solid ${palette.text}22`}
+                    >
                       <p style={{
                         margin: 0, color: "#F5F0EB",
                         fontFamily: "'DM Sans', sans-serif",
                         fontSize: "1.1rem", lineHeight: 1.6,
                       }}>{item}</p>
+                      <div style={{
+                        fontFamily: "'Courier Prime', monospace",
+                        fontSize: "0.55rem", letterSpacing: "0.12em",
+                        color: "rgba(255,255,255,0.2)", textTransform: "uppercase",
+                        marginTop: 6,
+                      }}>double click to copy</div>
                     </div>
                   </div>
                 ))}
@@ -1318,7 +1337,7 @@ Rules:
           const GUIDE_TEXT = {
             en: {
               how: "◈ how to use",
-              start: "LET'S FLIP REALITY ⚡",
+              install: { title: "📱 USE AS AN APP", ios: "iPhone: tap the Share button (□↑) in Safari → \"Add to Home Screen\"", android: "Android: tap ⋮ in Chrome → \"Add to Home Screen\"" },
               steps: [
                 { icon: "⚡", title: "FLIP IT", desc: "Type any keyword and hit FLIP IT. You'll get 6 contrarian insights that completely shatter mainstream thinking." },
                 { icon: "🔬", title: "DOUBLE CLICK", desc: "Double-click any idea card to unlock 5 real business opportunities built directly from that contrarian insight." },
@@ -1328,7 +1347,7 @@ Rules:
             },
             ko: {
               how: "◈ 사용 방법",
-              start: "현실을 뒤집어보자 ⚡",
+              install: { title: "📱 앱으로 사용하기", ios: "아이폰: Safari에서 공유 버튼(□↑) 탭 → \"홈 화면에 추가\"", android: "안드로이드: Chrome에서 ⋮ 탭 → \"홈 화면에 추가\"" },
               steps: [
                 { icon: "⚡", title: "FLIP IT", desc: "키워드를 입력하고 FLIP IT을 누르면 상식을 완전히 뒤집는 6가지 반mainstream 인사이트가 나와요." },
                 { icon: "🔬", title: "더블클릭", desc: "마음에 드는 아이디어 카드를 더블클릭하면 그 인사이트를 기반으로 한 실제 비즈니스 아이디어 5가지를 보여줘요." },
@@ -1338,7 +1357,7 @@ Rules:
             },
             ja: {
               how: "◈ 使い方",
-              start: "現実をひっくり返そう ⚡",
+              install: { title: "📱 アプリとして使う", ios: "iPhone: Safariで共有ボタン(□↑)をタップ →「ホーム画面に追加」", android: "Android: Chromeで ⋮ をタップ →「ホーム画面に追加」" },
               steps: [
                 { icon: "⚡", title: "FLIP IT", desc: "キーワードを入力してFLIP ITを押すと、常識を完全に覆す6つの逆張りインサイトが生成されます。" },
                 { icon: "🔬", title: "ダブルクリック", desc: "気に入ったアイデアカードをダブルクリックすると、そのインサイトをもとにした5つのビジネスアイデアが表示されます。" },
@@ -1348,7 +1367,7 @@ Rules:
             },
             zh: {
               how: "◈ 使用说明",
-              start: "颠覆现实，开始吧 ⚡",
+              install: { title: "📱 当作App使用", ios: "iPhone: 在Safari点击分享按钮(□↑) → \"添加到主屏幕\"", android: "Android: 在Chrome点击 ⋮ → \"添加到主屏幕\"" },
               steps: [
                 { icon: "⚡", title: "FLIP IT", desc: "输入关键词并点击 FLIP IT，获得6个完全颠覆主流思维的逆向洞察。" },
                 { icon: "🔬", title: "双击", desc: "双击任意想法卡片，即可解锁基于该洞察的5个真实商业机会。" },
@@ -1358,7 +1377,7 @@ Rules:
             },
             es: {
               how: "◈ cómo usar",
-              start: "VOLTEEMOS LA REALIDAD ⚡",
+              install: { title: "📱 ÚSALO COMO APP", ios: "iPhone: toca el botón compartir (□↑) en Safari → \"Añadir a pantalla de inicio\"", android: "Android: toca ⋮ en Chrome → \"Añadir a pantalla de inicio\"" },
               steps: [
                 { icon: "⚡", title: "FLIP IT", desc: "Escribe una palabra clave y presiona FLIP IT. Obtendrás 6 ideas contrarias que destruyen el pensamiento convencional." },
                 { icon: "🔬", title: "DOBLE CLIC", desc: "Haz doble clic en cualquier tarjeta para desbloquear 5 oportunidades de negocio reales basadas en ese insight." },
@@ -1368,7 +1387,7 @@ Rules:
             },
             fr: {
               how: "◈ comment utiliser",
-              start: "RENVERSONS LA RÉALITÉ ⚡",
+              install: { title: "📱 UTILISER COMME APP", ios: "iPhone: appuyez sur partager (□↑) dans Safari → \"Sur l'écran d'accueil\"", android: "Android: appuyez sur ⋮ dans Chrome → \"Ajouter à l'écran d'accueil\"" },
               steps: [
                 { icon: "⚡", title: "FLIP IT", desc: "Saisissez un mot-clé et appuyez sur FLIP IT. Obtenez 6 idées contrariennes qui brisent la pensée conventionnelle." },
                 { icon: "🔬", title: "DOUBLE CLIC", desc: "Double-cliquez sur une carte pour débloquer 5 opportunités business réelles basées sur cet insight." },
@@ -1378,7 +1397,7 @@ Rules:
             },
             de: {
               how: "◈ anleitung",
-              start: "REALITÄT UMKEHREN ⚡",
+              install: { title: "📱 ALS APP NUTZEN", ios: "iPhone: Teilen-Button (□↑) in Safari tippen → \"Zum Home-Bildschirm\"", android: "Android: ⋮ in Chrome tippen → \"Zum Startbildschirm hinzufügen\"" },
               steps: [
                 { icon: "⚡", title: "FLIP IT", desc: "Gib ein Stichwort ein und drücke FLIP IT. Du erhältst 6 konträre Einsichten, die konventionelles Denken völlig auf den Kopf stellen." },
                 { icon: "🔬", title: "DOPPELKLICK", desc: "Doppelklicke auf eine Karte, um 5 echte Geschäftsmöglichkeiten basierend auf diesem Insight freizuschalten." },
@@ -1388,7 +1407,7 @@ Rules:
             },
             pt: {
               how: "◈ como usar",
-              start: "VAMOS VIRAR A REALIDADE ⚡",
+              install: { title: "📱 USAR COMO APP", ios: "iPhone: toque em compartilhar (□↑) no Safari → \"Adicionar à Tela de Início\"", android: "Android: toque em ⋮ no Chrome → \"Adicionar à tela inicial\"" },
               steps: [
                 { icon: "⚡", title: "FLIP IT", desc: "Digite uma palavra-chave e clique em FLIP IT. Você receberá 6 insights contrários que destroem o pensamento convencional." },
                 { icon: "🔬", title: "DUPLO CLIQUE", desc: "Dê duplo clique em qualquer card para desbloquear 5 oportunidades de negócio reais baseadas nesse insight." },
@@ -1475,6 +1494,29 @@ Rules:
                     </div>
                   </div>
                 ))}
+
+                {/* Install as app section */}
+                <div style={{
+                  background: "rgba(255,255,255,0.05)",
+                  border: "1px solid rgba(255,255,255,0.1)",
+                  borderRadius: 12, padding: "12px 14px",
+                }}>
+                  <div style={{
+                    fontFamily: "'Courier Prime', monospace",
+                    fontSize: "0.62rem", letterSpacing: "0.18em",
+                    color: "rgba(255,255,255,0.5)", textTransform: "uppercase",
+                    marginBottom: 8,
+                  }}>{g.install.title}</div>
+                  <div style={{
+                    fontFamily: "'DM Sans', sans-serif",
+                    fontSize: "0.82rem", lineHeight: 1.6,
+                    color: "rgba(255,255,255,0.7)",
+                    display: "flex", flexDirection: "column", gap: 4,
+                  }}>
+                    <div>🍎 {g.install.ios}</div>
+                    <div>🤖 {g.install.android}</div>
+                  </div>
+                </div>
 
                 {/* hint */}
                 <div style={{
