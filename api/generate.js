@@ -12,7 +12,7 @@ export default async function handler(req, res) {
         "anthropic-version": "2023-06-01",
       },
       body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
+        model: "claude-sonnet-5-5",
         max_tokens: max_tokens || 1000,
         system,
         messages,
@@ -20,7 +20,8 @@ export default async function handler(req, res) {
     });
 
     const data = await response.json();
-    res.status(200).json(data);
+    // Pass Anthropic's status through so the app can tell a failure from an empty answer
+    res.status(response.ok ? 200 : response.status).json(data);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

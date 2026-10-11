@@ -663,7 +663,7 @@ export default function NicheMania() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
+          model: "claude-sonnet-5-5",
           max_tokens: 1000,
           system: `You are NICHE MANIA — a radical contrarian brainstorming engine for rebellious inventors and minority-mindset thinkers.
 
@@ -683,6 +683,7 @@ Rules:
         }),
       });
       const data = await response.json();
+      if (!response.ok || data.error) throw new Error(data.error?.message || `HTTP ${response.status}`);
       const raw  = data.content?.[0]?.text || "";
       const parsed = raw.split("\n").map(s => s.trim()).filter(s => s.length > 20);
       const fresh = parsed.slice(0, 6);
@@ -714,7 +715,7 @@ Rules:
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
+          model: "claude-sonnet-5-5",
           max_tokens: 1200,
           system: `You are NICHE MANIA's business opportunity engine. A contrarian insight has been selected — now turn it into REAL business opportunities.
 
@@ -733,6 +734,7 @@ Rules:
         }),
       });
       const data = await response.json();
+      if (!response.ok || data.error) throw new Error(data.error?.message || `HTTP ${response.status}`);
       const raw  = data.content?.[0]?.text || "";
       const parsed = raw.split("\n").map(s => s.trim()).filter(s => s.length > 10);
       setDrillItems(parsed.slice(0, 5));
