@@ -59,6 +59,16 @@ function pickPantone() {
 }
 
 // ── Web Audio ─────────────────────────────────────────────────────
+// Newer models can return more than one content block (e.g. thinking first), so gather every text block
+function textOf(data) {
+  return (data?.content || []).filter(b => b && b.type === "text" && b.text).map(b => b.text).join("\n");
+}
+// One idea per line; drop numbering, bullets and markdown bold. Short limit so dense Korean lines survive.
+function linesOf(raw, min) {
+  return raw.split("\n")
+    .map(s => s.trim().replace(/^(\d+[.)]|[-*•])\s+/, "").replace(/\*\*/g, "").trim())
+    .filter(s => s.length >= min);
+}
 const ctx = typeof AudioContext !== "undefined" ? new AudioContext() : null;
 
 function resumeCtx() { if (ctx && ctx.state === "suspended") ctx.resume(); }
@@ -689,8 +699,9 @@ Rules:
       });
       const data = await response.json();
       if (!response.ok || data.error) throw new Error(data.error?.message || `HTTP ${response.status}`);
-      const raw  = data.content?.[0]?.text || "";
-      const parsed = raw.split("\n").map(s => s.trim()).filter(s => s.length > 20);
+      const raw  = textOf(data);
+      const parsed = linesOf(raw, 8);
+      if (!parsed.length) throw new Error(`empty reply (${data.stop_reason || "no text"})`);
       const fresh = parsed.slice(0, 6);
       usedIdeas.current = [...usedIdeas.current, ...fresh];
       setIdeas(fresh);
@@ -698,9 +709,10 @@ Rules:
       setStage("result");
       playSuccess();
       setTimeout(() => bubblesRef.current?.scrollIntoView({ behavior: "smooth" }), 100);
-    } catch {
+    } catch (err) {
+      const errMsg = err?.message || "";
       playError();
-      setIdeas(["⚠ Connection to the anti-mainstream dimension failed. Try again."]);
+      setIdeas([`⚠ Connection to the anti-mainstream dimension failed. Try again.${errMsg ? ` (${errMsg})` : ""}`]);
       setPalette(pickPantone());
       setStage("result");
     } finally {
@@ -740,14 +752,15 @@ Rules:
       });
       const data = await response.json();
       if (!response.ok || data.error) throw new Error(data.error?.message || `HTTP ${response.status}`);
-      const raw  = data.content?.[0]?.text || "";
-      const parsed = raw.split("\n").map(s => s.trim()).filter(s => s.length > 10);
+      const raw  = textOf(data);
+      const parsed = linesOf(raw, 8);
+      if (!parsed.length) throw new Error(`empty reply (${data.stop_reason || "no text"})`);
       setDrillItems(parsed.slice(0, 5));
       playSuccess();
       setTimeout(() => drillRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 100);
-    } catch {
+    } catch (err) {
       playError();
-      setDrillItems(["⚠ Deep dive failed. Try again."]);
+      setDrillItems([`⚠ Deep dive failed. Try again.${err?.message ? ` (${err.message})` : ""}`]);
     } finally {
       setDrillLoading(false);
     }
