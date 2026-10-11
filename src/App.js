@@ -622,7 +622,12 @@ export default function NicheMania() {
   }, []);
 
   const handleBrainstorm = useCallback(async () => {
-    if (!keyword.trim() || loading) return;
+    // iOS keeps typed text "in composition" (Korean, predictive text) without firing onChange,
+    // so read the box itself rather than trusting state alone
+    const kw = (inputRef.current?.value ?? keyword).trim();
+    if (!kw || loading) return;
+    if (kw !== keyword) setKeyword(kw);
+    inputRef.current?.blur();
     playGlitch();
     setShowGuide(false);
     setLoading(true);
@@ -633,9 +638,9 @@ export default function NicheMania() {
     setPalette(PANTONE_IDLE);
 
     // Reset history if keyword changed
-    if (keyword.trim() !== lastKeyword.current) {
+    if (kw !== lastKeyword.current) {
       usedIdeas.current = [];
-      lastKeyword.current = keyword.trim();
+      lastKeyword.current = kw;
     }
 
     const previousBlock = usedIdeas.current.length > 0
@@ -679,7 +684,7 @@ Rules:
 - Start each idea with a bold claim, then the subversive insight
 - Channel the energy of Nikola Tesla meets a zine editor
 - IMPORTANT: Each run must feel completely fresh and different — never repeat patterns from previous sessions`,
-          messages: [{ role: "user", content: `Keyword: "${keyword.trim()}"${previousBlock}${angleBlock}` }],
+          messages: [{ role: "user", content: `Keyword: "${kw}"${previousBlock}${angleBlock}` }],
         }),
       });
       const data = await response.json();
@@ -959,7 +964,10 @@ Rules:
                   className="input-field"
                   value={keyword}
                   onChange={e => setKeyword(e.target.value)}
-                  onKeyDown={e => e.key === "Enter" && handleBrainstorm()}
+                  onInput={e => setKeyword(e.target.value)}
+                  onCompositionEnd={e => setKeyword(e.target.value)}
+                  onKeyDown={e => e.key === "Enter" && !e.nativeEvent.isComposing && handleBrainstorm()}
+                  enterKeyHint="go"
                   onFocus={() => playFocus()}
                   placeholder="ex: sleep, coffee, loneliness..."
                   style={{
@@ -977,7 +985,7 @@ Rules:
                 <button
                   className="submit-btn"
                   onClick={handleBrainstorm}
-                  disabled={loading || !keyword.trim()}
+                  disabled={loading}
                   style={{
                     background: keyword.trim() ? palette.text : `${palette.text}33`,
                     border: "none", borderRadius: 10,
